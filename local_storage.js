@@ -1,26 +1,3 @@
-const user_songs = {
-  album: {
-    name: "canzoni preferite",
-    songs: [
-      {
-        title: "Giants",
-        artist: "dermot kennedy",
-        year: "2021",
-      },
-      {
-        title: "Another brick in the wall",
-        artist: "Pink Floid",
-        year: 1990,
-      },
-      {
-        title: "Raise your glass",
-        artist: "Pink",
-        year: 2018,
-      },
-    ],
-  },
-};
-
 const songs_data = {
   songs: [
     {
@@ -1047,33 +1024,72 @@ const songs_data = {
     },
   ],
 };
-
+if (JSON.parse(localStorage.getItem("playlist"))) {
+  user_playlist = JSON.parse(localStorage.getItem("playlist"));
+} else {
+  user_playlist = {
+    album: {
+      name: "canzoni preferite",
+      songs: [],
+    },
+  };
+}
+class Pagination {
+  constructor(items = [], pageSize = 10) {
+    this.items = items;
+    this.pageSize = pageSize;
+  }
+  getPage(n) {
+    //se n=1-> slice da 0 a 10, slice da pageSize*0 a pageSize*1
+    //se n=2-> slice da 10 a 20, slice da pageSize*1 a pageSize*2
+    //se n=3-> slice da 20 a 30, slice da pageSize*2 a pageSize*3
+    let startIndex = this.pageSize * (n - 1);
+    let finalIndex = this.pageSize * n;
+    let page = this.items.slice(startIndex, finalIndex);
+    return page;
+  }
+  getPagesNum() {
+    //esempio se array di 32 e size di 5 le pagine saranno: 32/5 + 32%5 = 6+2
+    if (this.items.length % this.pageSize === 0) {
+      return this.items.length / this.pageSize;
+    }
+    return this.items.length / this.pageSize + 1;
+  }
+}
 window.onload = () => {
-  //   let data = JSON.stringify(songs_data);
-  //   let data_parsed = JSON.parse(data);
-  //   console.log(data);
-  //   console.log(data_parsed);
+  let paginazione = new Pagination(songs_data.songs);
+  let pagina1 = paginazione.getPage(1);
   let songs = document.querySelector(".songs");
 
-  songs_data.songs.forEach((song) => {
+  pagina1.forEach((song) => {
     songs.innerHTML += `<div class="card">
-        <h2 class="name">${song.title}</h2>
-        <span class="artist">${song.artist}</span> -
-        <span class="year">${song.year}</span>
-    </div>`;
+          <h2 class="name">${song.title}</h2>
+          <span class="artist">${song.artist}</span> -
+          <span class="year">${song.year}</span>
+      </div>`;
   });
-  let card = document.querySelectorAll("card");
-  card.onclick = () => {
-    //aggiunger canzone a quelle preferite
-  };
 
-  // orologio con tempo che passa in secondi ;
-  //
-  let time = document.querySelector(".time");
+  let cards = document.querySelectorAll(".card");
+
+  cards.forEach((card) => {
+    card.onclick = function (e) {
+      //aggiungere canzone a quelle preferite
+      console.dir(e.currentTarget.children[0].textContent);
+      let song_name_clicked = e.currentTarget.children[0].textContent;
+
+      //   console.log(user_playlist.album.songs);
+      user_playlist.album.songs.push(
+        songs_data.songs.find((song) => song.title === song_name_clicked)
+      );
+      localStorage.setItem("playlist", JSON.stringify(user_playlist));
+    };
+  });
+
+  // orologio con tempo che passa in secondi dall'apertura della pagina ;
+  let time = document.querySelector(".time span");
   let counter = sessionStorage.getItem("time") || 0;
   setInterval(() => {
     time.textContent = counter;
-    console.log(counter);
     counter++;
     sessionStorage.setItem("time", counter);
   }, 1000);
