@@ -1,0 +1,22 @@
+{
+  "album": {
+    "name": "canzoni preferite",
+    "songs": [
+      {
+        "title": "Giants",
+        "artist": "dermot kennedy",
+        "year": "2021"
+      },
+      {
+        "title": "Another brick in the wall",
+        "artist": "Pink Floid",
+        "year": 1990
+      },
+      {
+        "title": "Raise your glass",
+        "artist": "Pink",
+        "year": 2018
+      }
+    ]
+  }
+}
